@@ -6,9 +6,6 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.util.Hashtable;
 
-/**
- * Created by Usuario on 11/06/14.
- */
 public class JMSSender {
 
     private static InitialContext ctx = null;
@@ -27,10 +24,10 @@ public class JMSSender {
 
     public static void sendMessage(String mensaje) {
         // create InitialContext
-        Hashtable<String,String> properties = new Hashtable<String, String>();
+        Hashtable<String,String> properties = new Hashtable<>();
         properties.put(Context.INITIAL_CONTEXT_FACTORY, "weblogic.jndi.WLInitialContextFactory");
         // NOTE: The port number of the server is provided in the next line,
-        properties.put(Context.PROVIDER_URL, "t3://localhost:9013");
+        properties.put(Context.PROVIDER_URL, "t3://URL:PORT");
 
         try {
             ctx = new InitialContext(properties);
@@ -41,9 +38,8 @@ public class JMSSender {
         System.out.println("Got InitialContext " + ctx.toString());
 
         // create QueueConnectionFactory
-
         try {
-            qcf = (QueueConnectionFactory) ctx.lookup("midasLoanStatusCF"); //JNDI connection factory name stored in weblogic.
+            qcf = (QueueConnectionFactory) ctx.lookup("CONNECTION_FACTORY_JNDI"); //JNDI connection factory name stored in weblogic.
         } catch (NamingException ne) {
             ne.printStackTrace(System.err);
             System.exit(0);
@@ -68,7 +64,7 @@ public class JMSSender {
         System.out.println("Got QueueSession " + qsess.toString());
         // lookup Queue
         try {
-            q = (Queue) ctx.lookup("midasLoanStatusQ"); //JNDI queue name stored in weblogic.
+            q = (Queue) ctx.lookup("QUEUE_JNDI_NAME"); //JNDI queue name stored in weblogic.
         } catch (NamingException ne) {
             ne.printStackTrace(System.err);
             System.exit(0);
@@ -104,7 +100,6 @@ public class JMSSender {
         try {
             qsndr.send(textMessage);
         } catch (JMSException jmse) {
-            System.out.println("-- Trono -- ");
             System.out.println(jmse.getMessage());
             jmse.printStackTrace(System.err);
             System.exit(0);
